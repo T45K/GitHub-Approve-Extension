@@ -1,0 +1,20 @@
+{
+    "manifest_version": 3,
+    "name": "GitHub PR Approve Button",
+    "version": "1.0",
+    "description": "Add an approve button directly on the PR top page.",
+    "permissions": [
+        "activeTab",
+        "https://github.com/*"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "https://github.com/*/*/pull/*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ]
+}
