@@ -23,6 +23,9 @@ function addApproveButton() {
         const match = window.location.href.match(/https:\/\/github\.com\/(.*)\/(.*)\/pull\/(\d+)/);
         if (!match) return;
 
+        const lgtmImageUrl = (await (await fetch('https://lgtmoon.dev/api/images/random')).json()).images[0].url;
+        document.getElementById('pull_request_review_body').value = lgtmImageUrl
+
         document.querySelector("input[value='approve']").click();
         Array.from(document.querySelectorAll("span")).find(span => span.textContent.trim() === 'Submit review').click();
     });
