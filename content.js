@@ -23,7 +23,7 @@ function addApproveButton() {
         const match = window.location.href.match(/https:\/\/github\.com\/(.*)\/(.*)\/pull\/(\d+)/);
         if (!match) return;
 
-        const lgtmImageUrl = (await (await fetch('https://lgtmoon.dev/api/images/random')).json()).images[0].url;
+        const lgtmImageUrl = (await (await fetch('https://5lfj3yztuyxeydyhgujokykcpe0gnzsa.lambda-url.ap-northeast-1.on.aws/')).json()).imageUrl;
         document.getElementById('pull_request_review_body').value = lgtmImageUrl
 
         document.querySelector("input[value='approve']").click();
