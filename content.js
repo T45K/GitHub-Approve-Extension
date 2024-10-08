@@ -24,7 +24,7 @@ function addApproveButton() {
         if (!match) return;
 
         const lgtmImageUrl = (await (await fetch('https://5lfj3yztuyxeydyhgujokykcpe0gnzsa.lambda-url.ap-northeast-1.on.aws/')).json()).imageUrl;
-        document.getElementById('pull_request_review_body').value = lgtmImageUrl
+        document.getElementById('pull_request_review_body').value = `![LGTM](${lgtmImageUrl})`;
 
         document.querySelector("input[value='approve']").click();
         Array.from(document.querySelectorAll("span")).find(span => span.textContent.trim() === 'Submit review').click();
