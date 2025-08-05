@@ -36,7 +36,12 @@ function addApproveButton() {
             // ドロワーが表示されるのを待つ
             setTimeout(async () => {
                 // LGTMの画像を取得
-                const lgtmImageUrl = (await (await fetch('https://5lfj3yztuyxeydyhgujokykcpe0gnzsa.lambda-url.ap-northeast-1.on.aws/')).json()).imageUrl;
+                const response = await chrome.runtime.sendMessage({ action: 'fetchLgtmImage' });
+                if (!response.success) {
+                    console.error('Failed to fetch LGTM image:', response.error);
+                    return;
+                }
+                const lgtmImageUrl = response.imageUrl;
                 
                 // テキストエリアにLGTM画像を設定
                 const textareas = document.querySelectorAll('textarea');
