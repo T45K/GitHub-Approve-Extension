@@ -23,11 +23,58 @@ function addApproveButton() {
         const match = window.location.href.match(/https:\/\/github\.com\/(.*)\/(.*)\/pull\/(\d+)/);
         if (!match) return;
 
-        const lgtmImageUrl = (await (await fetch('https://5lfj3yztuyxeydyhgujokykcpe0gnzsa.lambda-url.ap-northeast-1.on.aws/')).json()).imageUrl;
-        document.getElementById('pull_request_review_body').value = `![LGTM](${lgtmImageUrl})`;
-
-        document.querySelector("input[value='approve']").click();
-        Array.from(document.querySelectorAll("span")).find(span => span.textContent.trim() === 'Submit review').click();
+        // 1. "Submit review"ボタンを押し、ドロワーを出現させる
+        const submitReviewButton = Array.from(document.querySelectorAll('button')).find(button => {
+            const buttonText = button.textContent.trim();
+            return buttonText.includes('Submit review') && 
+                   button.classList.contains('ReviewMenuButton-module__ReviewMenuButton--RFyxN');
+        });
+        
+        if (submitReviewButton) {
+            submitReviewButton.click();
+            
+            // ドロワーが表示されるのを待つ
+            setTimeout(async () => {
+                // LGTMの画像を取得
+                const response = await chrome.runtime.sendMessage({ action: 'fetchLgtmImage' });
+                if (!response.success) {
+                    console.error('Failed to fetch LGTM image:', response.error);
+                    return;
+                }
+                const lgtmImageUrl = response.imageUrl;
+                
+                // テキストエリアにLGTM画像を設定
+                const textareas = document.querySelectorAll('textarea');
+                for (const textarea of textareas) {
+                    if (textarea.placeholder === 'Leave a comment') {
+                        textarea.value = `![LGTM](${lgtmImageUrl})`;
+                        break;
+                    }
+                }
+                
+                // 2. ドロワー内の "Approve" ラジオボタンを押す
+                const approveRadio = Array.from(document.querySelectorAll('input[type="radio"]')).find(radio => 
+                    radio.value === 'approve' && !radio.disabled
+                );
+                
+                if (approveRadio) {
+                    approveRadio.click();
+                    
+                    // 3. 最後に、ドロワー内の "Submit review"ボタンを押す
+                    setTimeout(() => {
+                        const submitButtons = Array.from(document.querySelectorAll('button')).filter(button => {
+                            const buttonText = button.textContent.trim();
+                            return buttonText.includes('Submit review');
+                        });
+                        
+                        // ドロワー内の最後のSubmit reviewボタンをクリック
+                        if (submitButtons.length > 0) {
+                            submitButtons[submitButtons.length - 1].click();
+                        }
+                    }, 500);
+                }
+            }, 500);
+        }
     });
 
     // ボタンをページに追加
